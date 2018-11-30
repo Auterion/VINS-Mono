@@ -1,6 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?> 
 <launch>
+
     <arg name="config_path" default = "$(find feature_tracker)/../config/auterion/m600_rs_config.yaml" />
-	  <arg name="vins_path" default = "$(find feature_tracker)/../config/../" />
+    <arg name="vins_path" default = "$(find feature_tracker)/../config/../" />
+    <arg name="enable_rosbag" default = "true"/>
+    
+    <include file="$(find rovio)/launch/mavros_rs.launch"/>
     
     <node name="feature_tracker" pkg="feature_tracker" type="feature_tracker" output="log">
         <param name="config_file" type="string" value="$(arg config_path)" />
@@ -10,7 +15,7 @@
     <node name="vins_estimator" pkg="vins_estimator" type="vins_estimator" output="screen">
        <param name="config_file" type="string" value="$(arg config_path)" />
        <param name="vins_folder" type="string" value="$(arg vins_path)" />
-       <!--remap from="/vins_estimator/odometry" to="/mavros/vision_pose/pose"/-->
+       <remap from="/vins_estimator/odometry/pose" to="/mavros/vision_pose/pose"/>
     </node>
 
     <node name="pose_graph" pkg="pose_graph" type="pose_graph" output="screen">
@@ -21,4 +26,14 @@
         <param name="skip_dis" type="double" value="0" />
     </node>
 
+    <node pkg="rosbag" type="record" name="rosbag_record_cam_imu"
+        args="record -o $(env AUTERION_WS)/$(arg bag_prefix) 
+        /camera/infra1/image_rect_raw /camera/infra1/camera_info 
+        /mavros/imu/data_raw 
+        /mavros/cam_imu_sync/cam_imu_stamp
+        /vins_estimator/odometry
+        /mavros/vision_pose/pose"
+        if="$(arg enable_rosbag)" />
+
+    <node pkg="tf_broadcaster" type="tf_broadcaster" name="world_to_map" output="screen"/>
 </launch>
