@@ -3,6 +3,7 @@
 using namespace ros;
 using namespace Eigen;
 ros::Publisher pub_odometry, pub_latest_odometry;
+ros::Publisher pub_pose;
 ros::Publisher pub_path, pub_relo_path;
 ros::Publisher pub_point_cloud, pub_margin_cloud;
 ros::Publisher pub_key_poses;
@@ -26,6 +27,7 @@ void registerPub(ros::NodeHandle &n)
     pub_path = n.advertise<nav_msgs::Path>("path", 1000);
     pub_relo_path = n.advertise<nav_msgs::Path>("relocalization_path", 1000);
     pub_odometry = n.advertise<nav_msgs::Odometry>("odometry", 1000);
+    pub_pose = n.advertise<geometry_msgs::PoseStamped>("pose", 1000);
     pub_point_cloud = n.advertise<sensor_msgs::PointCloud>("point_cloud", 1000);
     pub_margin_cloud = n.advertise<sensor_msgs::PointCloud>("history_cloud", 1000);
     pub_key_poses = n.advertise<visualization_msgs::Marker>("key_poses", 1000);
@@ -133,6 +135,7 @@ void pubOdometry(const Estimator &estimator, const std_msgs::Header &header)
         path.header.frame_id = "world";
         path.poses.push_back(pose_stamped);
         pub_path.publish(path);
+        pub_pose.publish(pose_stamped);
 
         Vector3d correct_t;
         Vector3d correct_v;
