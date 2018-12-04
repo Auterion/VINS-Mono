@@ -18,7 +18,7 @@
         <arg name="infra1_fps" value="$(arg cam_fps)"/>
         <arg name="depth_fps" value="$(arg cam_fps)"/>
         <arg name="enable_external_hw_sync"    value="$(arg hw_sync)"/>
-        <arg name="static_time_offset"  value="0.016"/>
+        <arg name="static_time_offset"  value="0.009"/>
         <arg name="inter_cam_sync_mode" value="1" if="$(arg hw_sync)"/>
     </include>
 
