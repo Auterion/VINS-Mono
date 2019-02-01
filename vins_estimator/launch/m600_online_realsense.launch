@@ -6,7 +6,7 @@
     <arg name="enable_rosbag" default = "true"/>
     <arg name="bag_prefix" default = "vins"/>
     
-    <include file="$(find rovio)/launch/mavros_rs.launch"/>
+    <include file="$(find vins_estimator)/launch/mavros_rs.launch"/>
     
     <node name="feature_tracker" pkg="feature_tracker" type="feature_tracker" output="log">
         <param name="config_file" type="string" value="$(arg config_path)" />
