@@ -7,7 +7,12 @@
     <arg name="bag_prefix" default="rs"/>
     <arg name="hw_sync"   default="true"/>
 
-    <include file="$(find rovio)/launch/mavros.launch"/>
+    <include file="$(find mavros)/launch/px4.launch">
+       <arg name="fcu_url" default="$(arg fcu_url)"/>
+        <arg name="log_output" default="screen"/>
+    </include>
+
+
     <node name="convert_mavros_stamps" pkg="topic_tools" type="transform"
         args="/mavros/cam_imu_sync/cam_imu_stamp /hw_stamp std_msgs/Header
         'std_msgs.msg.Header(seq=m.frame_seq_id, stamp=m.frame_stamp)' --import std_msgs"/>
@@ -17,10 +22,11 @@
         <arg name="enable_infra2" value="false"/>
         <arg name="infra1_fps" value="$(arg cam_fps)"/>
         <arg name="depth_fps" value="$(arg cam_fps)"/>
-        <arg name="enable_external_hw_sync"    value="$(arg hw_sync)"/>
+        <arg name="external_hw_sync"    value="$(arg hw_sync)"/>
         <arg name="static_time_offset"  value="0.009"/>
         <arg name="inter_cam_sync_mode" value="1" if="$(arg hw_sync)"/>
     </include>
+
 
     <node name="set_RS_param" pkg="realsense2_camera" type="realsense_params_RX.sh" />
 

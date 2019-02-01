@@ -1,6 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?> 
 <launch>
     <arg name="config_path" default = "$(find feature_tracker)/../config/auterion/av_config.yaml" />
-	  <arg name="vins_path" default = "$(find feature_tracker)/../config/../" />
+	<arg name="vins_path" default = "$(find feature_tracker)/../config/../" />
+	<arg name="record_bag" default = "true"/>
+	<arg name="bag_prefix" default = "vins"/>
+    
     
     <node name="feature_tracker" pkg="feature_tracker" type="feature_tracker" output="log">
         <param name="config_file" type="string" value="$(arg config_path)" />
@@ -19,5 +23,21 @@
         <param name="skip_cnt" type="int" value="0" />
         <param name="skip_dis" type="double" value="0" />
     </node>
+    <node pkg="rosbag" type="record" name="rosbag_record_cam_imu"
+        args="record -o $(env AUTERION_WS)/$(arg bag_prefix) 
+        /camera/infra1/image_rect_raw 
+        /camera/infra1/camera_info 
+        /mavros/imu/data_raw
+        /mavros/timesync_status
+        /mavros/cam_imu_sync/cam_imu_stamp
+        /vins_estimator/odometry
+        /vins_estimator/pose
+        /vins_estimator/camera_pose
+        /mavros/local_position/pose
+        /mavros/vision_pose/pose 
+        /mavros/vision_pose/pose_cov"
+        if="$(arg enable_rosbag)" />
+
+    <node pkg="tf_broadcaster" type="tf_broadcaster" name="world_to_map" output="screen"/>
 
 </launch>
